@@ -1,0 +1,17 @@
+# Secrets: never in git
+.restic-env
+.restic-password
+
+# Dumps and logs
+*.sql
+*.log
+
+# Dependencies
+node_modules/
+
+# The site's build
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# OS
+.DS_Store

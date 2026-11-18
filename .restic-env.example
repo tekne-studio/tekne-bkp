@@ -1,0 +1,66 @@
+# Copy to ~/.restic-env and fill in your site's values.
+# The real ~/.restic-env stays out of git: it holds secrets.
+#   cp .restic-env.example ~/.restic-env && chmod 600 ~/.restic-env
+# The scripts source this file: check it with `bash -n ~/.restic-env` after editing.
+# Every variable: docs/configuration.md
+
+# --- restic repository (S3-compatible, e.g. Hetzner Object Storage) ---
+export RESTIC_REPOSITORY="s3:https://<endpoint>/<bucket>"
+export RESTIC_PASSWORD_FILE="$HOME/.restic-password"
+export AWS_ACCESS_KEY_ID="<access-key>"
+export AWS_SECRET_ACCESS_KEY="<secret-key>"
+
+# --- The site (required) ---
+export WP_PATH="$HOME/apps/my-site"                # WordPress (backup-wp.sh): the production folder
+# export MOODLE_PATH="/var/www/html/moodle"        # Moodle (backup-moodle.sh), in place of WP_PATH: the folder with config.php
+# export CRAFT_PATH="$HOME/apps/my-site"           # Craft (backup-craft.sh), in place of WP_PATH: the site folder
+# export CRAFT_ENV_FILE="$CRAFT_PATH/craft/.env"   # Craft's .env, when it is not at the top of CRAFT_PATH
+
+# --- Backup (optional) ---
+# export DB_DUMP="$HOME/backups/my-site.sql"       # the database dump; default: ~/backups/<site folder name>.sql
+# export BACKUP_LOG="$HOME/logs/backup.log"
+
+# --- Clone to staging, WordPress (required by clone-staging.sh) ---
+export STAGING_PATH="$HOME/apps/my-site_staging"   # the staging WordPress, with WP_ENVIRONMENT_TYPE = staging
+export STAGING_URL="https://staging.my-site.org"   # scheme and domain only
+
+# --- Clone to staging (optional) ---
+# export CLONE_TMP="$HOME/tmp"                     # where the clone's temporary folder lives
+# export CLONE_DEACTIVATE="mailgun w3-total-cache" # plugins deactivated in staging, space-separated
+# export CLONE_SKIP_TABLES="*wsal_*"               # tables left out of search-replace (a wp search-replace --skip-tables pattern)
+# export CLONE_CLEAN="et-cache"                    # wp-content/ folders deleted in staging after the clone
+# export CLONE_ROOT_FILES=".user.ini"              # web root files copied; empty copies none; on Apache, ".user.ini .htaccess"
+# export CLONE_AFTER="wp my-command check"         # command run in the staging folder at the end of the clone
+
+# --- Clone to staging, Moodle (clone-staging-moodle.sh) ---
+# export STAGING_PATH="/var/www/html/moodle-staging"  # the staging Moodle, with its own config.php setting noemailever
+# export CLONE_USER="www-data"                        # the user that owns the sites' files; the clone goes through sudo -n -u
+# export CLONE_TMP="/var/tmp/clone"                   # with CLONE_USER, a folder that user reaches
+# export CLONE_AFTER="php admin/cli/my-setup.php"     # command run in the staging folder at the end of the clone
+
+# --- Clone to staging, Craft (clone-staging-craft.sh) ---
+# export STAGING_PATH="$HOME/apps/my-site_staging"    # the staging site, deployed by the site's own deploy, with its own .env
+# export CLONE_SYNC="web/uploads"                     # folders mirrored from production, relative to the site folder
+# export CLONE_AFTER="php craft migrate/all"          # command run in the staging folder at the end of the clone
+
+# --- Zip for the site's owner, WordPress or Craft (zip-site.sh) ---
+# export ZIP_ENDPOINT="https://<endpoint>"         # scheme and host only
+# export ZIP_BUCKET="<bucket>"                     # a private bucket; the zips go under <ZIP_NAME>/
+# export ZIP_REGION="us-east-1"                    # the region in the endpoint, when it names one
+# export ZIP_ACCESS_KEY_ID="<access-key>"          # default: AWS_ACCESS_KEY_ID
+# export ZIP_SECRET_ACCESS_KEY="<secret-key>"      # default: AWS_SECRET_ACCESS_KEY
+# export ZIP_NAME="my-site"                        # default: the site folder's name
+# export ZIP_KEEP_DAYS=90                          # zips older than this are deleted
+# export ZIP_KEEP_MIN=3                            # the newest zips kept whatever their age
+# export ZIP_EXCLUDE=".git/* wp-content/cache/*"   # zip patterns relative to the site folder; * also crosses /
+# export ZIP_TMP="$HOME/tmp"                       # where the zip is built
+# export ZIP_LINK_DAYS=7                           # how long a signed link works, 1 to 7
+
+# --- Email (optional) ---
+# export EMAIL_TO="me@example.org owner@example.org"   # who gets the reports of zip-site.sh
+# export EMAIL_ALERT_TO="me@example.org"               # who gets the failures; default: EMAIL_TO
+# export EMAIL_FROM="backup@example.org"           # default: the server's own sender
+# export EMAIL_SUBJECT_PREFIX="[BACKUP]"
+
+# --- Monitoring (optional: heartbeat pinged at the end of each backup, <URL>/fail on failure) ---
+export HEALTHCHECK_URL=""
